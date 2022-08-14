@@ -6,7 +6,7 @@ db_locale = 'processes.db'
 
 
 @app.route('/')
-@app.route('/home')
+@app.route('/home/')
 def home_page():
     process_data = query_contact_details()
     return render_template("index.html", process_data = process_data)
