@@ -166,7 +166,7 @@ def main():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'more_difficult_string'
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean' #'cosmo'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///nblocker/nblocker.sqlite3'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///nblocker.sqlite3'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     admin = Admin(app,template_mode='bootstrap4', index_view=AnalyticsView(name='Dashboard'))
@@ -225,6 +225,8 @@ def main():
         update_process_list(db.session)
 		
     app.run(debug=True,use_reloader=False)
+
+
 
 
 if __name__ == '__main__':
