@@ -10,6 +10,20 @@ import platform
 import ruleman
 import time
 import datetime
+import os
+import sys
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 # https://flask-admin.readthedocs.io/en/v1.0.9/templates/#building-blocks
 # https://flask-admin.readthedocs.io/en/latest/api/mod_model/
@@ -163,11 +177,11 @@ def rules_deleted(model):
     pass
 	
 def main():
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path="",static_folder = resource_path('static'), template_folder = resource_path("templates"))
     app.config['SECRET_KEY'] = 'more_difficult_string'
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean' #'cosmo'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///nblocker.sqlite3'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///' + os.path.join(os.path.dirname(os.getcwd()), 'nblocker.sqlite3')
+    app.config['SQLALCHEMY_TsRACK_MODIFICATIONS'] = False
 
     admin = Admin(app,template_mode='bootstrap4', index_view=AnalyticsView(name='Dashboard'))
     global db
@@ -225,8 +239,6 @@ def main():
         update_process_list(db.session)
 		
     app.run(debug=True,use_reloader=False)
-
-
 
 
 if __name__ == '__main__':
