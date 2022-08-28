@@ -1,4 +1,5 @@
 from flask import Flask, request, url_for
+
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 
@@ -177,12 +178,23 @@ def rules_deleted(model):
     pass
 	
 def main():
-    app = Flask(__name__, static_url_path="",static_folder = resource_path('static'), template_folder = resource_path("templates"))
+    application_path = ""
+    database_path = ""
+    if getattr(sys, 'frozen', False):
+      template_folder = os.path.join(sys._MEIPASS, 'templates')
+      static_folder = os.path.join(sys._MEIPASS, 'static')
+      application_path = os.path.dirname(sys.executable)
+      database_path = os.path.join((application_path), 'nblocker.sqlite3')
+      app = Flask(__name__, template_folder=template_folder, static_folder = static_folder)
+    else:
+      app = Flask(__name__)
+      application_path = os.path.dirname(__file__)
+      database_path = 'nblocker.sqlite3'
     app.config['SECRET_KEY'] = 'more_difficult_string'
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean' #'cosmo'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///' + os.path.join(os.path.dirname(os.getcwd()), 'nblocker.sqlite3')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite+pysqlite:///' + database_path
     app.config['SQLALCHEMY_TsRACK_MODIFICATIONS'] = False
-
+    print(os.path.join(os.path.dirname(application_path), 'nblocker.sqlite3'))
     admin = Admin(app,template_mode='bootstrap4', index_view=AnalyticsView(name='Dashboard'))
     global db
     db = SQLAlchemy(app)
